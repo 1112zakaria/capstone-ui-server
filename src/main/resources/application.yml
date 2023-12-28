@@ -16,3 +16,9 @@ spring:
     console:
       enabled: true
       path: /h2
+
+logging:
+  level:
+    org.springframework.web.servlet.handler.HandlerMappingIntrospector: DEBUG
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+# logging
