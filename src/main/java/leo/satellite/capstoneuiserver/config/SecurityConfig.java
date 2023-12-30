@@ -22,13 +22,15 @@ public class SecurityConfig {
         http
                 .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
                 .and()
-                .addFilterBefore(new JwtAuthFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthFilter(userAuthProvider), BasicAuthenticationFilter.class)
+                .headers().frameOptions().disable()
+                .and()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(HttpMethod.POST, "/login", "/register").permitAll()
-                        .anyRequest().authenticated()
+                        //.requestMatchers(HttpMethod.POST, "/login", "/register").permitAll()
+                        .anyRequest().permitAll()
                 );
         return http.build();
 

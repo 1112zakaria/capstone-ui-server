@@ -30,7 +30,7 @@ public class UserAuthenticationProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String createtoken(String login) {
+    public String createToken(String login) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + 3_600_000);
 
