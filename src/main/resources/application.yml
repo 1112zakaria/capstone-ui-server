@@ -31,3 +31,10 @@ logging:
       satellite:
         capstoneuiserver: DEBUG
 # logging
+
+# External dependency reference paths
+matlab-sim:
+  host: localhost
+  port: 6000
+  satTest: ${matlab-sim.host}:${matlab-sim.port}/satTest
+
