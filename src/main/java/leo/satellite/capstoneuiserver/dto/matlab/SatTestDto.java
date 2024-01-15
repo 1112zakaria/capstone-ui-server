@@ -17,6 +17,6 @@ public class SatTestDto {
     private ComplexDto awgnSig;
     private ComplexDto therSig;
     private ComplexDto phaseSig;
-    private int[] rxData;   // FIXME: this might not work... might have to change to list
+    private List<Integer> rxData;   // FIXME: this might not work... might have to change to list
 
 }
