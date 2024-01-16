@@ -18,7 +18,8 @@ public interface SatTestMapper {
             @Mapping(source = "therSig.real", target = "therSigReal"),
             @Mapping(source = "therSig.imaginary", target = "therSigImag"),
             @Mapping(source = "phaseSig.real", target = "phaseSigReal"),
-            @Mapping(source = "phaseSig.imaginary", target = "phaseSigImag")
+            @Mapping(source = "phaseSig.imaginary", target = "phaseSigImag"),
+            @Mapping(expression = "java(satTestDto.mapRxData())", target = "rxData")
     })
     SatTestRowEntity toSatTestEntity(SatTestDto satTestDto);
     List<SatTestRowEntity> toSatTestEntity(List<SatTestDto> satTestDtos);

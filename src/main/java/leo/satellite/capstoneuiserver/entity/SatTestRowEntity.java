@@ -21,5 +21,6 @@ public class SatTestRowEntity {
     private double therSigImag;
     private double phaseSigReal;
     private double phaseSigImag;
+    private String rxData;
 
 }

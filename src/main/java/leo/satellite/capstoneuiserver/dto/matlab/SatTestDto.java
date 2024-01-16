@@ -16,4 +16,12 @@ public class SatTestDto {
     private ComplexDto phaseSig;
     private List<Integer> rxData;   // FIXME: this might not work... might have to change to list
 
+    public String mapRxData() {
+        String output = "";
+        for (Integer i : rxData) {
+            output = output.concat(i.toString());
+        }
+        return output;
+    }
+
 }
