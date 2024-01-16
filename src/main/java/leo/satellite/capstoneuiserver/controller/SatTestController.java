@@ -6,6 +6,7 @@ import leo.satellite.capstoneuiserver.entity.SatTestTableEntity;
 import leo.satellite.capstoneuiserver.mapper.SatTestMapper;
 import leo.satellite.capstoneuiserver.repository.SatTestRowRepository;
 import leo.satellite.capstoneuiserver.repository.SatTestTableRepository;
+import leo.satellite.capstoneuiserver.services.SatTestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,8 +26,7 @@ public class SatTestController {
 
     @Value("${matlab-sim.satTest}")
     private String satTestEndpoint;
-    private final SatTestRowRepository rowRepository;
-    private final SatTestTableRepository tableRepository;
+    private final SatTestService service;
     private final SatTestMapper mapper;
 
     @GetMapping("/run")
@@ -43,8 +43,9 @@ public class SatTestController {
 
         List<SatTestRowEntity> entities = mapper.toSatTestEntity(responseArray);
         log.info(entities.toString());
-        SatTestTableEntity tableEntity = new SatTestTableEntity(1L, entities);
-        tableRepository.save(tableEntity);
+        
+        // FIXME: add conditional to check if user is not anonymous? Maybe 0 can be anon?
+        SatTestTableEntity tableEntity = service.updateUserTable("guest", entities);
         return tableEntity;
     }
 }
