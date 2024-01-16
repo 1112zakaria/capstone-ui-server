@@ -35,17 +35,17 @@ public class SatTestController {
     }
 
     @GetMapping("/run/satTest")
-    public SatTestTableEntity runSatTest() {
+    public List<SatTestDto> runSatTest() {
         RestTemplate restTemplate = new RestTemplate();
         String uri = satTestEndpoint;
         ResponseEntity<List<SatTestDto>> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, null, new ParameterizedTypeReference<List<SatTestDto>>() {});
         List<SatTestDto> responseArray = responseEntity.getBody();
-
+        log.info(responseArray.toString());
         List<SatTestRowEntity> entities = mapper.toSatTestEntity(responseArray);
         log.info(entities.toString());
-        
+
         // FIXME: add conditional to check if user is not anonymous? Maybe 0 can be anon?
-        SatTestTableEntity tableEntity = service.updateUserTable("guest", entities);
-        return tableEntity;
+        service.updateUserTable("guest", entities);
+        return responseArray;
     }
 }
