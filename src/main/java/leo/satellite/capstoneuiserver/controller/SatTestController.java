@@ -2,8 +2,10 @@ package leo.satellite.capstoneuiserver.controller;
 
 import leo.satellite.capstoneuiserver.dto.matlab.SatTestDto;
 import leo.satellite.capstoneuiserver.entity.SatTestRowEntity;
+import leo.satellite.capstoneuiserver.entity.SatTestTableEntity;
 import leo.satellite.capstoneuiserver.mapper.SatTestMapper;
-import leo.satellite.capstoneuiserver.repository.SatTestRepository;
+import leo.satellite.capstoneuiserver.repository.SatTestRowRepository;
+import leo.satellite.capstoneuiserver.repository.SatTestTableRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +25,8 @@ public class SatTestController {
 
     @Value("${matlab-sim.satTest}")
     private String satTestEndpoint;
-    private final SatTestRepository repository;
+    private final SatTestRowRepository rowRepository;
+    private final SatTestTableRepository tableRepository;
     private final SatTestMapper mapper;
 
     @GetMapping("/run")
@@ -32,21 +35,16 @@ public class SatTestController {
     }
 
     @GetMapping("/run/satTest")
-    public List<SatTestRowEntity> runSatTest() {
+    public SatTestTableEntity runSatTest() {
         RestTemplate restTemplate = new RestTemplate();
         String uri = satTestEndpoint;
-//        ResponseEntity<SatTestDto[]> responseEntity =
-//                restTemplate.getForEntity(uri, SatTestDto[].class);
         ResponseEntity<List<SatTestDto>> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, null, new ParameterizedTypeReference<List<SatTestDto>>() {});
-//        SatTestDto[] responseArray = responseEntity.getBody();
         List<SatTestDto> responseArray = responseEntity.getBody();
 
         List<SatTestRowEntity> entities = mapper.toSatTestEntity(responseArray);
         log.info(entities.toString());
-        //SatTestTableEntity entity = mapper.toSatTestTableEntity(1L, entities);
-//        SatTestTableEntity tableEntity = new SatTestTableEntity(1L, entities);
-        repository.saveAll(entities);
-//        return responseArray;
-        return entities;
+        SatTestTableEntity tableEntity = new SatTestTableEntity(1L, entities);
+        tableRepository.save(tableEntity);
+        return tableEntity;
     }
 }
