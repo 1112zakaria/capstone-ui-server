@@ -1,17 +1,14 @@
 package leo.satellite.capstoneuiserver.dto.matlab;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
-import lombok.Setter;
-import org.apache.commons.numbers.complex.Complex;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 public class SatTestDto {
-    private int idx;
+    private int rowIdx;
     private int txData;
     private ComplexDto txSig;
     private ComplexDto awgnSig;
