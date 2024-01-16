@@ -1,9 +1,6 @@
 package leo.satellite.capstoneuiserver.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -17,6 +14,16 @@ public class SatTestTableEntity {
     private Long userId;
     @OneToMany(cascade = CascadeType.ALL)
     private List<SatTestRowEntity> satTestRow;
+    @OneToOne(cascade = CascadeType.ALL)
+    private ConfigEntity config;
 
-    public SatTestTableEntity() {}
+    public SatTestTableEntity() {
+        config = new ConfigEntity();
+    }
+
+    public SatTestTableEntity(Long userId, List<SatTestRowEntity> rowEntities) {
+        this();
+        this.userId = userId;
+        this.satTestRow = rowEntities;
+    }
 }
