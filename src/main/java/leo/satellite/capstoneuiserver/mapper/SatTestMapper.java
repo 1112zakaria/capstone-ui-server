@@ -1,6 +1,8 @@
 package leo.satellite.capstoneuiserver.mapper;
 
+import leo.satellite.capstoneuiserver.dto.matlab.ConfigDto;
 import leo.satellite.capstoneuiserver.dto.matlab.SatTestDto;
+import leo.satellite.capstoneuiserver.entity.ConfigEntity;
 import leo.satellite.capstoneuiserver.entity.SatTestRowEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -23,4 +25,5 @@ public interface SatTestMapper {
     })
     SatTestRowEntity toSatTestEntity(SatTestDto satTestDto);
     List<SatTestRowEntity> toSatTestEntity(List<SatTestDto> satTestDtos);
+    ConfigDto toConfigDto(ConfigEntity config);
 }

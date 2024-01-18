@@ -1,19 +1,26 @@
 package leo.satellite.capstoneuiserver.controller;
 
+import leo.satellite.capstoneuiserver.dto.UserDto;
+import leo.satellite.capstoneuiserver.dto.matlab.ConfigDto;
 import leo.satellite.capstoneuiserver.dto.matlab.SatTestDto;
+import leo.satellite.capstoneuiserver.entity.ConfigEntity;
 import leo.satellite.capstoneuiserver.entity.SatTestRowEntity;
 import leo.satellite.capstoneuiserver.entity.SatTestTableEntity;
+import leo.satellite.capstoneuiserver.entity.User;
 import leo.satellite.capstoneuiserver.mapper.SatTestMapper;
 import leo.satellite.capstoneuiserver.repository.SatTestRowRepository;
 import leo.satellite.capstoneuiserver.repository.SatTestTableRepository;
 import leo.satellite.capstoneuiserver.services.SatTestService;
+import leo.satellite.capstoneuiserver.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -30,6 +38,7 @@ public class SatTestController {
     @Value("${matlab-sim.satTest}")
     private String satTestEndpoint;
     private final SatTestService service;
+    private final UserService userService;
     private final SatTestMapper mapper;
 
     @GetMapping("/debug")
@@ -66,8 +75,18 @@ public class SatTestController {
     }
 
     @GetMapping("/api/config")
-    public void getConfig() {
+    public ResponseEntity<ConfigDto> getConfig() {
+        ConfigDto config;
+        ResponseEntity<ConfigDto> responseEntity;
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDto user;
 
+        // fetch user?
+        user = userService.findByLogin(auth.getName());
+        // call config fetch service
+        config = service.getUserConfig(user);
+        // return config dto
+        return ResponseEntity.ok(config);
     }
 
     @PostMapping("/api/config")

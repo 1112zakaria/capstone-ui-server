@@ -22,8 +22,12 @@ public class SatTestTableEntity {
     }
 
     public SatTestTableEntity(Long userId, List<SatTestRowEntity> rowEntities) {
+        this(userId);
+        this.satTestRow = rowEntities;
+    }
+
+    public SatTestTableEntity(Long userId) {
         this();
         this.userId = userId;
-        this.satTestRow = rowEntities;
     }
 }
