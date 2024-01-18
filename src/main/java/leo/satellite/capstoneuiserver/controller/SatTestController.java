@@ -77,12 +77,12 @@ public class SatTestController {
     @GetMapping("/api/config")
     public ResponseEntity<ConfigDto> getConfig() {
         ConfigDto config;
-        ResponseEntity<ConfigDto> responseEntity;
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDto user;
 
         // fetch user?
-        user = userService.findByLogin(auth.getName());
+        log.info("user's name: " + auth.getName());
+        user = (UserDto) auth.getPrincipal(); // IMPORTANT: get principal and cast accordingly...
         // call config fetch service
         config = service.getUserConfig(user);
         // return config dto

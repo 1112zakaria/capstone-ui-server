@@ -9,6 +9,7 @@ import leo.satellite.capstoneuiserver.entity.User;
 import leo.satellite.capstoneuiserver.exception.AppException;
 import leo.satellite.capstoneuiserver.mapper.SatTestMapper;
 import leo.satellite.capstoneuiserver.repository.ConfigRepository;
+import leo.satellite.capstoneuiserver.repository.SatTestRowRepository;
 import leo.satellite.capstoneuiserver.repository.SatTestTableRepository;
 import leo.satellite.capstoneuiserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class SatTestService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final SatTestTableRepository tableRepository;
+    private final SatTestRowRepository rowRepository;
     private final ConfigRepository configRepository;
     private final SatTestMapper mapper;
 
@@ -46,30 +48,25 @@ public class SatTestService {
     public ConfigDto getUserConfig(UserDto user) {
         // FIXME: do not access another service's repository
         ConfigEntity config;
-        Optional<SatTestTableEntity> table;
+        Optional<SatTestTableEntity> optionalTable;
+        SatTestTableEntity table;
 
-        table = tableRepository.findById(user.getId());
-        if (table.isEmpty()) {
-            throw new AppException("User table not found", HttpStatus.BAD_REQUEST);
+        table = tableRepository.findById(user.getId()).orElse(null);
+        if (table == null) {
+            table = initializeUserTable(user);
         }
-        config = table.get().getConfig();
+        config = table.getConfig();
         return mapper.toConfigDto(config);
     }
 
-
-
-//    public SatTestTableEntity initializeTable(User user) {
-//        // FIXME: stop passing fucking strings, pass the User entity object damnit!
-//        Optional<SatTestTableEntity> table;
-//        SatTestTableEntity newTable;
-//
-//        // get existing table, if it does exist create new one
-//        table = tableRepository.findById(user.getId());
-//        if (table.isPresent()) {
-//            return table.get();
-//        }
-//        newTable = new SatTestTableEntity(user.getId());
-//        tableRepository.save(newTable);
-//        return newTable;
-//    }
+    private SatTestTableEntity initializeUserTable(UserDto userDto) {
+        Optional<SatTestTableEntity> table;
+        SatTestTableEntity newTable;
+        table = tableRepository.findById(userDto.getId());
+        // clear table contents
+        table.ifPresent(satTestTableEntity -> rowRepository.deleteAll(satTestTableEntity.getSatTestRow()));
+        newTable = new SatTestTableEntity(userDto.getId());
+        tableRepository.save(newTable);
+        return newTable;
+    }
 }
