@@ -2,6 +2,7 @@ package leo.satellite.capstoneuiserver.services;
 
 import leo.satellite.capstoneuiserver.dto.UserDto;
 import leo.satellite.capstoneuiserver.dto.matlab.ConfigDto;
+import leo.satellite.capstoneuiserver.dto.matlab.SatTestDto;
 import leo.satellite.capstoneuiserver.entity.ConfigEntity;
 import leo.satellite.capstoneuiserver.entity.SatTestRowEntity;
 import leo.satellite.capstoneuiserver.entity.SatTestTableEntity;
@@ -13,8 +14,14 @@ import leo.satellite.capstoneuiserver.repository.SatTestRowRepository;
 import leo.satellite.capstoneuiserver.repository.SatTestTableRepository;
 import leo.satellite.capstoneuiserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +38,8 @@ public class SatTestService {
     private final SatTestRowRepository rowRepository;
     private final ConfigRepository configRepository;
     private final SatTestMapper mapper;
+    @Value("${matlab-sim.satTest}")
+    private String satTestEndpoint;
 
     public SatTestTableEntity updateUserTable(String username, List<SatTestRowEntity> rowEntities) {
         // FIXME: do not access another service's repository
@@ -81,5 +90,23 @@ public class SatTestService {
         table.setConfig(mapper.toConfigEntity(config));
         tableRepository.save(table);
         return config;
+    }
+
+    private List<SatTestDto> runSatTest(ConfigDto config) {
+        RestTemplate restTemplate = new RestTemplate();
+        String uri = satTestEndpoint;
+        ResponseEntity<List<SatTestDto>> response;
+        List<SatTestDto> data;
+
+        // determine arguments to add depending on configs... or just add all of them?
+        // Q: should I do argument validation to make sure user doesn't put weird values?
+        uri = UriComponentsBuilder.fromHttpUrl(satTestEndpoint)
+                .queryParam("snr", config.getSnr())
+                .queryParam("numBits", config.getNumBits())
+                .queryParam("modOrd", config.getModOrd())
+                .toUriString();
+        response = restTemplate.exchange(uri, HttpMethod.GET, null, new ParameterizedTypeReference<List<SatTestDto>>() {});
+        data = response.getBody();
+        return data;
     }
 }

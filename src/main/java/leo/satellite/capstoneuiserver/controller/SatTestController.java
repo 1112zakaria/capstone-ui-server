@@ -67,6 +67,8 @@ public class SatTestController {
 
     @GetMapping("/api/satTest")
     public List<SatTestDto> getSatTestData() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
         return null;
     }
 
