@@ -60,6 +60,7 @@ public class SatTestService {
     }
 
     private SatTestTableEntity initializeUserTable(UserDto userDto) {
+        // FIXME: add a "initializeifempty" function to call each function?
         Optional<SatTestTableEntity> table;
         SatTestTableEntity newTable;
         table = tableRepository.findById(userDto.getId());
@@ -68,5 +69,17 @@ public class SatTestService {
         newTable = new SatTestTableEntity(userDto.getId());
         tableRepository.save(newTable);
         return newTable;
+    }
+
+    public ConfigDto setUserConfig(UserDto user, ConfigDto config) {
+        SatTestTableEntity table;
+
+        table = tableRepository.findById(user.getId()).orElse(null);
+        if (table == null) {
+            table = initializeUserTable(user);
+        }
+        table.setConfig(mapper.toConfigEntity(config));
+        tableRepository.save(table);
+        return config;
     }
 }

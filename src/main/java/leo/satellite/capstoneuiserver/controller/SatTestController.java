@@ -24,6 +24,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -90,7 +91,12 @@ public class SatTestController {
     }
 
     @PostMapping("/api/config")
-    public void setConfig() {
+    public ResponseEntity<ConfigDto> setConfig(@RequestBody ConfigDto configDto) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        ConfigDto config;
+        UserDto user = (UserDto) auth.getPrincipal();
 
+        config = service.setUserConfig(user, configDto);
+        return ResponseEntity.ok(config);
     }
 }

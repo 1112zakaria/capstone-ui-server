@@ -26,4 +26,5 @@ public interface SatTestMapper {
     SatTestRowEntity toSatTestEntity(SatTestDto satTestDto);
     List<SatTestRowEntity> toSatTestEntity(List<SatTestDto> satTestDtos);
     ConfigDto toConfigDto(ConfigEntity config);
+    ConfigEntity toConfigEntity(ConfigDto config);
 }
