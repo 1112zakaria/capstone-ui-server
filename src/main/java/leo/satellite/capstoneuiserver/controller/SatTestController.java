@@ -74,7 +74,13 @@ public class SatTestController {
 
     @PostMapping("/api/satTest")
     public List<SatTestDto> runSatTest() {
-        return null;
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDto user = (UserDto) auth.getPrincipal();
+        ConfigDto config;
+        List<SatTestDto> data;
+
+        data = service.runSatTest(user);
+        return data;
     }
 
     @GetMapping("/api/config")

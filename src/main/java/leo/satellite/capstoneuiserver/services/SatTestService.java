@@ -55,10 +55,11 @@ public class SatTestService {
     }
 
     public ConfigDto getUserConfig(UserDto user) {
-        // FIXME: do not access another service's repository
         ConfigEntity config;
         Optional<SatTestTableEntity> optionalTable;
         SatTestTableEntity table;
+
+        table = getSatTestTable(user);
 
         table = tableRepository.findById(user.getId()).orElse(null);
         if (table == null) {
@@ -80,6 +81,24 @@ public class SatTestService {
         return newTable;
     }
 
+    /**
+     * Gets existing table or initializes new one if dne
+     * @param user
+     * @return
+     */
+    private SatTestTableEntity getSatTestTable(UserDto user) {
+        Optional<SatTestTableEntity> table;
+        SatTestTableEntity newTable;
+
+        table = tableRepository.findById(user.getId());
+        if (table.isPresent()) {
+            return table.get();
+        }
+        newTable = new SatTestTableEntity(user.getId());
+        tableRepository.save(newTable);
+        return newTable;
+    }
+
     public ConfigDto setUserConfig(UserDto user, ConfigDto config) {
         SatTestTableEntity table;
 
@@ -90,6 +109,20 @@ public class SatTestService {
         table.setConfig(mapper.toConfigEntity(config));
         tableRepository.save(table);
         return config;
+    }
+
+    public List<SatTestDto> getSatTestData(UserDto user) {
+        SatTestTableEntity table;
+
+        table = getSatTestTable(user);
+        return null;
+    }
+
+    public List<SatTestDto> runSatTest(UserDto user) {
+        ConfigDto config;
+
+        config = getUserConfig(user);
+        return runSatTest(config);
     }
 
     private List<SatTestDto> runSatTest(ConfigDto config) {
